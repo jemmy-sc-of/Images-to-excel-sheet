@@ -26,27 +26,27 @@ def image_to_matrix(image_file: str, scale=1.0):
     image = cv2.resize(image, (0, 0), fx=scale, fy=scale)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
-    metrix = []
+    matrix = []
     for pixel_row in image:
-        metrix.append([RGBA2HEX(*pixel_value) for pixel_value in pixel_row])
+        matrix.append([RGBA2HEX(*pixel_value) for pixel_value in pixel_row])
 
-    return metrix
+    return matrix
 
 
-def image_metrix_to_excel(image_file: str, save_name: str, scale: float):
-    image_metrix = image_to_matrix(image_file, scale)
+def image_matrix_to_excel(image_file: str, save_name: str, scale: float):
+    image_matrix = image_to_matrix(image_file, scale)
     wb = openpyxl.Workbook()
     ws = wb.active
 
     # Resize rows height
-    for i in range(len(image_metrix)):
+    for i in range(len(image_matrix)):
         ws.row_dimensions[i +1].width = 1
 
     # Resize columns width
-    for i in range(len(image_metrix[0])):
+    for i in range(len(image_matrix[0])):
         ws.column_dimensions[get_column_letter(i +1)].width = 3
 
-    for row, img_row in enumerate(image_metrix, start=1):
+    for row, img_row in enumerate(image_matrix, start=1):
         for col, cell_color in enumerate(img_row, start=1):
             ws.cell(row, col).fill = PatternFill(
                 start_color=cell_color,
@@ -64,4 +64,4 @@ if __name__ == '__main__':
     parser.add_argument('-s', '--scale', help='Resize output image in excel', type=float)
 
     args = parser.parse_args()
-    image_metrix_to_excel(args.image, args.output, args.scale)
+    image_matrix_to_excel(args.image, args.output, args.scale)
